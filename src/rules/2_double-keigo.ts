@@ -1,9 +1,7 @@
+
 import { getTokenizer } from "../util/kuromoji-loader";
 import type { TextlintRuleModule } from "@textlint/types";
-
-const SONKEI_VERBS = [
-    "いらっしゃる", "おっしゃる", "なさる", "くださる", "召し上がる", "ご覧になる"
-];
+import { SONKEI_VERBS } from "../util/keigo-helper";
 
 import { IpadicFeatures } from "kuromoji";
 
