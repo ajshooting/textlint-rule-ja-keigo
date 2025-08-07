@@ -1,0 +1,64 @@
+{
+  "name": "textlint-rule-ja-keigo",
+  "version": "1.0.0",
+  "description": "日本語の敬語使用をチェックするtextlintルール",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "clean": "rm -rf dist",
+    "prepare": "npm run clean && npm run build"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": [
+      "<rootDir>/test/**/*.ts"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    }
+  },
+  "keywords": [
+    "textlint",
+    "textlint-rule",
+    "japanese",
+    "keigo",
+    "敬語",
+    "日本語",
+    "grammar",
+    "proofreading"
+  ],
+  "author": "ajshooting",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajshooting/textlint-rule-ja-keigo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ajshooting/textlint-rule-ja-keigo/issues"
+  },
+  "homepage": "https://github.com/ajshooting/textlint-rule-ja-keigo#readme",
+  "files": [
+    "dist",
+    "prh.yml"
+  ],
+  "packageManager": "pnpm@10.14.0",
+  "dependencies": {
+    "kuromoji": "^0.1.2",
+    "textlint-rule-prh": "^6.1.0"
+  },
+  "devDependencies": {
+    "@textlint/kernel": "^15.2.1",
+    "@textlint/textlint-plugin-text": "^15.2.1",
+    "@textlint/types": "^15.2.1",
+    "@types/jest": "^30.0.0",
+    "@types/kuromoji": "^0.1.3",
+    "@types/node": "^24.2.0",
+    "jest": "^30.0.5",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.9.2"
+  }
+}
