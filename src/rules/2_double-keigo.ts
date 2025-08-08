@@ -27,7 +27,7 @@ const reporter: TextlintRuleModule = (context) => {
                     // ご覧 に なら れる
                     if ((
                         (token1.surface_form === "お" || token1.surface_form === "ご") &&
-                        token2.pos === "名詞" &&
+                        (token2.pos === "名詞" || token2.pos === "動詞") &&
                         token3.surface_form === "に" &&
                         token4.basic_form === "なる" &&
                         token5.basic_form === "れる" && token5.pos === "動詞"
@@ -39,9 +39,9 @@ const reporter: TextlintRuleModule = (context) => {
                         )
                     ) {
                         const original = tokens.slice(i, i + 5).map((t: IpadicFeatures) => t.surface_form).join(""); // お読みになられる
-                        // ここで活用形変換できれば提案もできる
-                        // const suggested1 = tokens.slice(i, i + 4).map((t: IpadicFeatures) => t.surface_form).join(""); // お読みになる
+                        // const suggested1 = token1.surface_form + token2.surface_form + "になる"; // お読みになる
                         // const suggested2 =  // 読まれる
+                        // 「${suggested1}」か「${token2.basic_form}+れる」が適切です。
                         const ruleError = new RuleError(`二重敬語です。「お〜になる」と「〜れる」が重複しています。`, {
                             index: token1.word_position - 1
                         });
@@ -52,30 +52,18 @@ const reporter: TextlintRuleModule = (context) => {
                 }
 
 
-                // パターン2: [尊敬動詞] + 「れる」
-                if (
-                    SONKEI_VERBS.includes(token1.basic_form) &&
-                    ((token2.pos === "助動詞" || token2.pos === "動詞") && token2.basic_form === "れる")
-                ) {
-                    const original = token1.surface_form + token2.surface_form;
-                    const ruleError = new RuleError(`二重敬語です。尊敬語「${token1.basic_form}」と尊敬の助動詞「れる」が重複しています。「${token1.basic_form}」のまま、もしくは「おっしゃられる->言われる」などが適切です。`, {
-                        index: token1.word_position - 1
-                    });
-                    report(node, ruleError);
-                }
-
-
-                // パターン3: 謙譲語 + させていただく
+                // パターン2: 謙譲語 + させていただく
                 if (i < tokens.length - 4) {
                     const token3 = tokens[i + 2];
                     const token4 = tokens[i + 3];
                     const token5 = tokens[i + 4];
-                    // させ(させる) (て) いただく/頂く
-                    // さ(する) せ(せる) て いただく/頂く 
+                    // [存じ上げ] させ(させる) て いただく/頂く
+                    // [いただか] せ(せる) て いただく/頂く
+                    // [拝見] さ(する) せ(せる) て いただく/頂く 
                     if (
                         KENJOU_VERBS_I.includes(token1.basic_form) && (
                             (
-                                token2.pos === "動詞" && token2.basic_form === "させる" &&
+                                token2.pos === "動詞" && (token2.basic_form === "させる" || token2.basic_form === "せる") &&
                                 token3.pos === "助詞" && token3.surface_form === "て" &&
                                 token4.pos === "動詞" && (token4.basic_form === "いただく" || token4.basic_form === "頂く")
                             ) || (
@@ -89,7 +77,7 @@ const reporter: TextlintRuleModule = (context) => {
                         const endIndex = (token4.pos === "動詞" && (token4.basic_form === "いただく" || token4.basic_form === "頂く")) ? i + 4 : i + 5;
                         const original = tokens.slice(i, endIndex).map((t: IpadicFeatures) => t.surface_form).join("");
                         const suggested = token1.basic_form;
-                        const ruleError = new RuleError(`二重敬語です。謙譲語「${token1.basic_form}」と「させていただく」が重複しています。「${suggested}」が適切です。`, {
+                        const ruleError = new RuleError(`二重敬語です。謙譲語「${token1.basic_form}」と「させていただく」が重複しています。「${suggested}(+する)」が適切です。`, {
                             index: token1.word_position - 1
                         });
                         report(node, ruleError);
@@ -97,10 +85,23 @@ const reporter: TextlintRuleModule = (context) => {
                 }
 
 
+                // パターン3: [尊敬動詞] + 「れる」(尊敬動詞が「お/ご〜する」でない場合)
+                if (
+                    SONKEI_VERBS.includes(token1.basic_form) &&
+                    ((token2.pos === "助動詞" || token2.pos === "動詞") && token2.basic_form === "れる")
+                ) {
+                    const original = token1.surface_form + token2.surface_form;
+                    const ruleError = new RuleError(`二重敬語です。尊敬語「${token1.basic_form}」と尊敬の助動詞「れる」が重複しています。「${token1.basic_form}」のまま、もしくは「おっしゃられる->言われる」などが適切です。`, {
+                        index: token1.word_position - 1
+                    });
+                    report(node, ruleError);
+                }
+
+
                 // パターン4: 敬称 + 様（語彙は util/keigo-helper で管理）
                 if (
                     KEISHOU_WORDS.some(keishou => token1.surface_form.includes(keishou)) &&
-                    token2 && (token2.surface_form === "様" || token2.surface_form === "さま")
+                    token2 && (token2.surface_form === "様" || token2.surface_form === "さま" || token2.surface_form === "殿")
                 ) {
                     const ruleError = new RuleError(`二重敬語です。「${token1.surface_form}」はすでに敬称なので「様」は不要です。「${token1.surface_form}」または「お名前＋様」が適切です。`, {
                         index: token1.word_position - 1
