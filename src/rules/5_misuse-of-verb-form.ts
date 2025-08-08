@@ -19,8 +19,8 @@ const reporter: TextlintRuleModule = (context) => {
                 if (
                     (token1.surface_form === "ご" || token1.surface_form === "お") &&
                     token2.pos === "名詞" && token2.pos_detail_1 === "サ変接続" &&
-                    token3.basic_form === "さ" &&
-                    token4.basic_form === "れる" && token4.pos === "動詞"
+                    (token3.basic_form === "する" || token3.basic_form === "なす") &&
+                    token4.pos === "動詞" && token4.basic_form === "れる"
                 ) {
                     const original = token1.surface_form + token2.surface_form + token3.surface_form + token4.surface_form;
                     const suggested = `${token1.surface_form}${token2.surface_form}になる`;
