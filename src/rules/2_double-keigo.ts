@@ -1,7 +1,7 @@
 
 import { getTokenizer } from "../util/kuromoji-loader";
 import type { TextlintRuleModule } from "@textlint/types";
-import { SONKEI_VERBS, KENJOU_VERBS_I } from "../util/keigo-helper";
+import { SONKEI_VERBS, KENJOU_VERBS_I, KEISHOU_WORDS } from "../util/keigo-helper";
 
 import { IpadicFeatures } from "kuromoji";
 
@@ -112,12 +112,7 @@ const reporter: TextlintRuleModule = (context) => {
                 }
 
 
-                // パターン4: 敬称 + 様
-                // 敬称のリスト 
-                const KEISHOU_WORDS = [
-                    "社長", "部長", "課長", "係長", "主任", "先生", "先輩", "お客様", "お客さん",
-                    "部長さん", "課長さん", "係長さん", "主任さん", "先生", "お医者さん", "看護師さん"
-                ];
+                // パターン4: 敬称 + 様（語彙は util/keigo-helper で管理）
 
                 if (KEISHOU_WORDS.some(keishou => currentToken.surface_form.includes(keishou))) {
                     if (nextToken && (nextToken.surface_form === "様" || nextToken.surface_form === "さま")) {
