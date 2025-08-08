@@ -23,7 +23,7 @@ const reporter: TextlintRuleModule = (context) => {
                     token3.basic_form === "くださる"
                 ) {
                     const original = token1.surface_form + token2.surface_form + token3.surface_form;
-                    const ruleError = new RuleError(`尊敬語と謙譲語の混同です。謙譲語「${token1.basic_form}」と尊敬表現「ください」は一緒に使えません。「お聞きください」や「お尋ねください」などが適切です。`, {
+                    const ruleError = new RuleError(`尊敬語と謙譲語の混同です。謙譲語「${token1.basic_form}」と尊敬表現「くださる」は一緒に使えません。「お聞きください」や「お尋ねください」などが適切です。`, {
                         index: token1.word_position - 1
                     });
                     report(node, ruleError);
