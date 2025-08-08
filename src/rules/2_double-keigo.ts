@@ -54,10 +54,8 @@ const reporter: TextlintRuleModule = (context) => {
 
                 // パターン2: [尊敬動詞] + 「れる」
                 if (
-                    token1.pos === "動詞" &&
                     SONKEI_VERBS.includes(token1.basic_form) &&
-                    ((token2.pos === "助動詞" || token2.pos === "動詞") &&
-                        token2.basic_form === "れる")
+                    ((token2.pos === "助動詞" || token2.pos === "動詞") && token2.basic_form === "れる")
                 ) {
                     const original = token1.surface_form + token2.surface_form;
                     const ruleError = new RuleError(`二重敬語です。尊敬語「${token1.basic_form}」と尊敬の助動詞「れる」が重複しています。「${token1.basic_form}」のまま、もしくは「おっしゃられる->言われる」などが適切です。`, {
@@ -100,35 +98,38 @@ const reporter: TextlintRuleModule = (context) => {
 
 
                 // パターン4: 敬称 + 様（語彙は util/keigo-helper で管理）
-                if (KEISHOU_WORDS.some(keishou => token1.surface_form.includes(keishou))) {
-                    if (token2 && (token2.surface_form === "様" || token2.surface_form === "さま")) {
-                        const ruleError = new RuleError(`二重敬語です。「${token1.surface_form}」はすでに敬称なので「様」は不要です。「${token1.surface_form}」または「お名前＋様」が適切です。`, {
-                            index: token1.word_position - 1
-                        });
-                        report(node, ruleError);
-                    }
+                if (
+                    KEISHOU_WORDS.some(keishou => token1.surface_form.includes(keishou)) &&
+                    token2 && (token2.surface_form === "様" || token2.surface_form === "さま")
+                ) {
+                    const ruleError = new RuleError(`二重敬語です。「${token1.surface_form}」はすでに敬称なので「様」は不要です。「${token1.surface_form}」または「お名前＋様」が適切です。`, {
+                        index: token1.word_position - 1
+                    });
+                    report(node, ruleError);
                 }
 
 
                 // パターン5: 各位 + 様
-                if (token1.surface_form === "各位") {
-                    // 前後に「様」「さま」がないかチェック
-                    if (token2 && (token2.surface_form === "様" || token2.surface_form === "さま")) {
-                        const ruleError = new RuleError(`二重敬語です。「各位」はすでに敬語なので「様」は不要です。「各位」のみが適切です。`, {
-                            index: token1.word_position - 1
-                        });
-                        report(node, ruleError);
-                    }
+                if (
+                    token1.surface_form === "各位" &&
+                    token2 && (token2.surface_form === "様" || token2.surface_form === "さま")
+                ) {
+                    const ruleError = new RuleError(`二重敬語です。「各位」はすでに敬語なので「様」は不要です。「各位」のみが適切です。`, {
+                        index: token1.word_position - 1
+                    });
+                    report(node, ruleError);
+
                 }
 
                 // 「皆様各位」パターン
-                if (token1.surface_form === "皆様" || token1.surface_form === "皆さま") {
-                    if (token2 && token2.surface_form === "各位") {
-                        const ruleError = new RuleError(`二重敬語です。「皆様」と「各位」が重複しています。「皆様」または「各位」のいずれかが適切です。`, {
-                            index: token1.word_position - 1
-                        });
-                        report(node, ruleError);
-                    }
+                if (
+                    token1.surface_form === "皆様" || token1.surface_form === "皆さま" &&
+                    token2 && token2.surface_form === "各位"
+                ) {
+                    const ruleError = new RuleError(`二重敬語です。「皆様」と「各位」が重複しています。「皆様」または「各位」のいずれかが適切です。`, {
+                        index: token1.word_position - 1
+                    });
+                    report(node, ruleError);
                 }
             }
         }
