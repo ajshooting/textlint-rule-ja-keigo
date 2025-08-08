@@ -32,15 +32,16 @@ const reporter: TextlintRuleModule = (context) => {
 
                 // パターン2: 「させていただく」の濫用
                 // 「さ」が前についちゃう場合がある
-                if (token1.pos === "動詞" && token1.surface_form.endsWith("さ") &&
-                    token2.surface_form === "せ" &&
-                    token3.surface_form === "て" &&
-                    token4.basic_form === "いただく") {
-                    const ruleError = new RuleError(`「させていただく」は、相手の許可や恩恵を受ける文脈で使われます。文脈によっては冗長な表現と受け取られることがあります。「〜いたします」や「〜ます」など、より簡潔な表現もご検討ください。`, {
-                        index: tokens[i].word_position - 1
-                    });
-                    report(node, ruleError);
-                }
+                // if (token1.pos === "動詞" && token1.surface_form.endsWith("さ") &&
+                //     token2.surface_form === "せ" &&
+                //     token3.surface_form === "て" &&
+                //     token4.basic_form === "いただく") {
+                //     const ruleError = new RuleError(`「させていただく」は、相手の許可や恩恵を受ける文脈で使われます。文脈によっては冗長な表現と受け取られることがあります。「〜いたします」や「〜ます」など、より簡潔な表現もご検討ください。`, {
+                //         index: tokens[i].word_position - 1
+                //     });
+                //     report(node, ruleError);
+                // }
+                // 別に間違ってはないらしい...?
             }
         }
     };
