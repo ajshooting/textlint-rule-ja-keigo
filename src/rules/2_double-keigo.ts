@@ -1,5 +1,5 @@
 
-import { getTokenizer } from "../util/kuromoji-loader";
+import { tokenizeText } from "../util/kuromoji-loader";
 import type { TextlintRuleModule } from "@textlint/types";
 import { SONKEI_VERBS, KENJOU_VERBS_I, KEISHOU_WORDS } from "../util/keigo-helper";
 
@@ -11,8 +11,7 @@ const reporter: TextlintRuleModule = (context) => {
     return {
         async [Syntax.Str](node) {
             const text = getSource(node);
-            const tokenizer = await getTokenizer();
-            const tokens = tokenizer.tokenize(text);
+            const tokens = await tokenizeText(text);
 
             for (let i = 0; i < tokens.length - 1; i++) {
                 const token1 = tokens[i];
