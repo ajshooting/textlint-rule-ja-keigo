@@ -1,4 +1,4 @@
-import { getTokenizer } from "../util/kuromoji-loader";
+import { tokenizeText } from "../util/kuromoji-loader";
 import type { TextlintRuleModule } from "@textlint/types";
 
 const reporter: TextlintRuleModule = (context) => {
@@ -6,8 +6,7 @@ const reporter: TextlintRuleModule = (context) => {
     return {
         async [Syntax.Str](node) {
             const text = getSource(node);
-            const tokenizer = await getTokenizer();
-            const tokens = tokenizer.tokenize(text);
+            const tokens = await tokenizeText(text);
 
             for (let i = 0; i < tokens.length - 3; i++) {
                 const token1 = tokens[i];
