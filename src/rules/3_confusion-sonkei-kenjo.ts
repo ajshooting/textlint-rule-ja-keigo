@@ -15,6 +15,7 @@ const reporter: TextlintRuleModule = (context) => {
                 const token3 = tokens[i + 2];
 
                 // [謙譲語Iの動詞] + て + ください
+                // TODO: 確認
                 if (
                     token1.pos === "動詞" &&
                     KENJOU_VERBS_I.includes(token1.basic_form) &&
