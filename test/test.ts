@@ -28,27 +28,25 @@ describe("textlint-rule-ja-keigo", () => {
         it("should report manual keigo errors", async () => {
             // prhパターンに正確に一致するテキストを使用
             const { messages } = await lintTextForRule("こちら、商品になります", manualKeigoRule, {});
-            // メッセージの内容をログ出力してデバッグ
-            console.log("Manual keigo messages:", messages);
-            if (messages.length > 0) {
-                assert.strictEqual(messages.length, 1);
-                assert.ok(messages[0].message.includes("なります"));
-            } else {
-                // パターンが一致しない場合はスキップ
-                console.log("No messages found for manual keigo test - pattern may not match");
-            }
+            assert.strictEqual(messages.length, 1);
+            assert.ok(messages[0].message.includes("なります"));
         });
     });
 
     describe("2_double-keigo", () => {
         it("should report double keigo errors", async () => {
             const { messages } = await lintTextForRule("先生がお読みになられる。", doubleKeigoRule);
-            console.log("Double keigo messages:", messages);
-            // メッセージが見つからない場合のデバッグ
-            if (messages.length > 0) {
-                assert.strictEqual(messages.length, 1);
-                assert.ok(messages[0].message.includes("二重敬語"));
-            }
+            assert.strictEqual(messages.length, 1);
+            assert.ok(messages[0].message.includes("二重敬語"));
+        });
+
+        it("should report 皆様各位 but not 皆様 alone", async () => {
+            const withoutEach = await lintTextForRule("皆様", doubleKeigoRule);
+            const withEach = await lintTextForRule("皆様各位", doubleKeigoRule);
+
+            assert.strictEqual(withoutEach.messages.length, 0);
+            assert.strictEqual(withEach.messages.length, 1);
+            assert.ok(withEach.messages[0].message.includes("二重敬語"));
         });
     });
 
@@ -63,28 +61,16 @@ describe("textlint-rule-ja-keigo", () => {
     describe("4_inappropriate-o-go", () => {
         it("should report inappropriate o/go errors", async () => {
             const { messages } = await lintTextForRule("弊社の御考え", inappropriateOGoRule);
-            console.log("Inappropriate o/go messages:", messages);
-            if (messages.length > 0) {
-                assert.strictEqual(messages.length, 1);
-                assert.ok(messages[0].message.includes("尊敬語"));
-            } else {
-                // 実際のテキストで確認
-                const { messages: messages2 } = await lintTextForRule("弊社のお考え", inappropriateOGoRule);
-                console.log("Alternative test messages:", messages2);
-                // このテストはパターンマッチの問題で現在スキップ
-                console.log("Test skipped due to pattern matching issues");
-            }
+            assert.strictEqual(messages.length, 1);
+            assert.ok(messages[0].message.includes("尊敬語"));
         });
     });
 
     describe("5_misuse-of-verb-form", () => {
         it("should report misuse of verb errors", async () => {
             const { messages } = await lintTextForRule("御利用される場合は、", misuseVerbRule);
-            console.log("Misuse verb messages:", messages);
-            if (messages.length > 0) {
-                assert.strictEqual(messages.length, 1);
-                assert.ok(messages[0].message.includes("ご/お〜される"));
-            }
+            assert.strictEqual(messages.length, 1);
+            assert.ok(messages[0].message.includes("ご/お〜される"));
         });
     });
 });

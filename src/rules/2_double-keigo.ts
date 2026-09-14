@@ -123,7 +123,7 @@ const reporter: TextlintRuleModule = (context) => {
 
                 // 「皆様各位」パターン
                 if (
-                    token1.surface_form === "皆様" || token1.surface_form === "皆さま" &&
+                    (token1.surface_form === "皆様" || token1.surface_form === "皆さま") &&
                     token2 && token2.surface_form === "各位"
                 ) {
                     const ruleError = new RuleError(`二重敬語です。「皆様」と「各位」が重複しています。「皆様」または「各位」のいずれかが適切です。`, {
