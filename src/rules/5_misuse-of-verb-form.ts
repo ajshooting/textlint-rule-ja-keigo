@@ -16,14 +16,14 @@ const reporter: TextlintRuleModule = (context) => {
 
                 // パターン1: ご/お〜される
                 if (
-                    (token1.surface_form === "ご" || token1.surface_form === "お") &&
+                    (token1.surface_form === "ご" || token1.surface_form === "お" || token1.surface_form === "御") &&
                     token2.pos === "名詞" && token2.pos_detail_1 === "サ変接続" &&
                     (token3.basic_form === "する" || token3.basic_form === "なす") &&
                     token4.pos === "動詞" && token4.basic_form === "れる"
                 ) {
                     const original = token1.surface_form + token2.surface_form + token3.surface_form + token4.surface_form;
                     const suggested = `${token1.surface_form}${token2.surface_form}になる`;
-                    const ruleError = new RuleError(`「ご/お〜される」は不適切な敬語です。「${suggested}」や「${token2.surface_form}なさる」などが適切です。`, {
+                    const ruleError = new RuleError(`「ご/お/御〜される」は不適切な敬語です。「${suggested}」や「${token2.surface_form}なさる」などが適切です。`, {
                         index: token1.word_position - 1
                     });
                     report(node, ruleError);

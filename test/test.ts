@@ -70,7 +70,7 @@ describe("textlint-rule-ja-keigo", () => {
         it("should report misuse of verb errors", async () => {
             const { messages } = await lintTextForRule("御利用される場合は、", misuseVerbRule);
             assert.strictEqual(messages.length, 1);
-            assert.ok(messages[0].message.includes("ご/お〜される"));
+            assert.ok(messages[0].message.includes("ご/お/御〜される"));
         });
     });
 });
